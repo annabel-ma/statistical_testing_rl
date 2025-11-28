@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# SLURM logs
+logs/
+*.out
+*.err
+
+# Experiment results (large files)
+rl_experiments/
+*.zip
+*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+submit_rl_auto.sbatch
+
+# Job lists (can be regenerated)
+joblist.txt
+

@@ -1,0 +1,67 @@
+# RL Experiments Configuration
+
+# Tasks (environments) to run
+tasks:
+  - "Hopper-v5"
+  - "Walker2d-v5"
+  - "HalfCheetah-v5"
+  - "Ant-v5"
+  - "Humanoid-v5"
+
+# Algorithms to use
+algorithms:
+  - "SAC"
+  - "TD3"
+  - "DDPG"
+  - "PPO"
+
+# Random seeds to use
+seeds: [0, 1, 2, 3, 4]
+
+# Number of episodes for evaluation
+eval_episodes: 20
+
+# Timesteps per task (can be overridden per task)
+timesteps_per_task:
+  "Hopper-v5": 1000000
+  "Walker2d-v5": 1000000
+  "HalfCheetah-v5": 3000000
+  "Ant-v5": 3000000
+  "Humanoid-v5": 10000000
+
+# Default timesteps if task not in timesteps_per_task
+default_total_timesteps: 5000000
+
+# Global RNG seed for reproducibility
+global_rng_seed: 31415
+
+# Directory structure (relative to script location)
+directories:
+  base: "rl_experiments"
+  runs: "rl_experiments/runs"
+  models: "rl_experiments/models"
+  results_csv: "rl_experiments/final_eval_returns.csv"
+  learning_curves_csv: "rl_experiments/learning_curves.csv"
+
+# Algorithm-specific settings
+algorithm_settings:
+  SAC:
+    action_noise: null
+  TD3:
+    action_noise:
+      sigma: 0.1
+  DDPG:
+    action_noise:
+      sigma: 0.1
+  PPO:
+    action_noise: null
+
+# SLURM settings
+slurm:
+  # Maximum number of jobs to run concurrently (set %N in --array=1-M%N)
+  max_concurrent_jobs: 20
+  # Memory per job (MB)
+  memory_mb: 8000
+  # Time limit (days-hours:minutes:seconds)
+  time_limit: "0-48:00:00"
+

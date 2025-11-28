@@ -1,0 +1,11 @@
+numpy<2.0
+scipy<1.11
+mujoco
+gymnasium[mujoco]
+stable-baselines3
+pandas
+matplotlib
+tqdm
+rich
+pyyaml
+
