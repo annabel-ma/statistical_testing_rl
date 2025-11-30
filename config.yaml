@@ -59,7 +59,8 @@ algorithm_settings:
 # SLURM settings
 slurm:
   # Maximum number of jobs to run concurrently (set %N in --array=1-M%N)
-  max_concurrent_jobs: 20
+  # Increase this to run more jobs in parallel (check your cluster's limits)
+  max_concurrent_jobs: 50
   # Memory per job (MB)
   memory_mb: 8000
   # Time limit (days-hours:minutes:seconds)
