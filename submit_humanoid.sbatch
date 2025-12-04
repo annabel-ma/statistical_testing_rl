@@ -7,7 +7,7 @@
 #SBATCH --open-mode=append
 #SBATCH -o /n/home09/annabelma/rl_final_proj/logs_whatsleft/rl_%A_%a.out
 #SBATCH -e /n/home09/annabelma/rl_final_proj/logs_whatsleft/rl_%A_%a.err
-#SBATCH --array=1-142%1
+#SBATCH --array=41-41
 #SBATCH --gres=gpu:1
 
 # PARALLEL EXECUTION: This script runs multiple jobs in parallel!
