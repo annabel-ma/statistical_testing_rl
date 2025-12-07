@@ -14,6 +14,7 @@ Outputs:
 """
 
 import os
+import sys
 import warnings
 from typing import Tuple
 
@@ -368,6 +369,7 @@ for task in TASKS:
         continue
     
     print(f"\nTask: {task}")
+    sys.stdout.flush()
     
     for i, algo1 in enumerate(available_algos):
         for algo2 in available_algos[i+1:]:
@@ -379,14 +381,17 @@ for task in TASKS:
                 continue
             
             print(f"  Using empirical samples: {algo1} (n={len(empirical1)}), {algo2} (n={len(empirical2)})")
+            sys.stdout.flush()
             
             for alpha in alphas:
                 print(f"    Alpha = {alpha}")
+                sys.stdout.flush()
                 for target_n in seed_grid:
                     if target_n > min(len(empirical1), len(empirical2)):
                         continue
                     
                     print(f"      Target seed budget N = {target_n}")
+                    sys.stdout.flush()
                     for test_name in tests_list:
                         try:
                             fpr, se = estimate_fpr_empirical(
@@ -408,8 +413,10 @@ for task in TASKS:
                                 'expected_fpr': alpha
                             })
                             print(f"        {test_name:20s}: α* = {fpr:.4f} ± {se:.4f} (expected ≈ {alpha:.4f})")
+                            sys.stdout.flush()  # Ensure real-time output
                         except Exception as e:
                             print(f"        {test_name:20s}: Error - {e}")
+                            sys.stdout.flush()  # Ensure real-time output
 
 fpr_empirical_df = pd.DataFrame(fpr_empirical_results)
 

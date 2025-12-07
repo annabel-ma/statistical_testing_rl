@@ -60,5 +60,8 @@ joblist_humanoid.txt
 joblist_humanoid2.txt
 joblist_ppo.txt
 
+generate_joblist3.py
+humanoid_indices.txt
+
 # submodule
 rl_stats/
