@@ -2,12 +2,13 @@
 #SBATCH -J rl-training
 #SBATCH -c 1
 #SBATCH -t 0-72:00:00
-#SBATCH -p mweber_compute
+#SBATCH -p mweber_gpu
 #SBATCH --mem=8000
 #SBATCH --open-mode=append
-#SBATCH -o /n/home09/annabelma/rl_final_proj/logs/logs4/rl_%A_%a.out
-#SBATCH -e /n/home09/annabelma/rl_final_proj/logs/logs4/rl_%A_%a.err
-#SBATCH --array=101-200
+#SBATCH -o /n/home09/annabelma/rl_final_proj/logs/logs_remaining_humanoid/rl_%A_%a.out
+#SBATCH -e /n/home09/annabelma/rl_final_proj/logs/logs_remaining_humanoid/rl_%A_%a.err
+#SBATCH --array=10-11,15
+#SBATCH --gres=gpu:1
 
 # PARALLEL EXECUTION: This script runs multiple jobs in parallel!
 # The --array=1-N%M means:
@@ -80,7 +81,7 @@ fi
 echo "==========================="
 
 # Job list file - using joblist_humanoid2.txt (missing seeds 5-54)
-JOBLIST="${JOBLIST:-$SCRIPT_DIR/joblist6.txt}"
+JOBLIST="${JOBLIST:-$SCRIPT_DIR/joblist_humanoid2.txt}"
 [[ -f "$JOBLIST" ]] || { echo "ERROR: $JOBLIST not found. Run script to generate joblist_humanoid2.txt first."; exit 1; }
 
 # Get the line from joblist

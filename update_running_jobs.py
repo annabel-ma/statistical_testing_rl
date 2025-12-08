@@ -12,6 +12,8 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 JOBLIST_PATH = os.path.join(SCRIPT_DIR, "joblist.txt")
 JOBLIST2_PATH = os.path.join(SCRIPT_DIR, "joblist2.txt")
+JOBLIST_HUMANOID_PATH = os.path.join(SCRIPT_DIR, "joblist_humanoid2.txt")
+JOBLIST6_PATH = os.path.join(SCRIPT_DIR, "joblist6.txt")
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "rl_experiments", "running_jobs.txt")
 
 def get_joblist_for_job(job_id, job_base, script_dir, array_id, joblist_lines, joblist2_lines, nlines, nlines2):
@@ -136,6 +138,24 @@ def main():
             joblist2_lines = [line.strip() for line in f.readlines()]
         nlines2 = len(joblist2_lines)
         print(f"Found joblist2.txt with {nlines2} entries", file=sys.stderr)
+    
+    # Read joblist_humanoid2.txt if it exists
+    joblist_humanoid_lines = []
+    nlines_humanoid = 0
+    if os.path.exists(JOBLIST_HUMANOID_PATH):
+        with open(JOBLIST_HUMANOID_PATH, 'r') as f:
+            joblist_humanoid_lines = [line.strip() for line in f.readlines()]
+        nlines_humanoid = len(joblist_humanoid_lines)
+        print(f"Found joblist_humanoid2.txt with {nlines_humanoid} entries", file=sys.stderr)
+    
+    # Read joblist6.txt if it exists
+    joblist6_lines = []
+    nlines6 = 0
+    if os.path.exists(JOBLIST6_PATH):
+        with open(JOBLIST6_PATH, 'r') as f:
+            joblist6_lines = [line.strip() for line in f.readlines()]
+        nlines6 = len(joblist6_lines)
+        print(f"Found joblist6.txt with {nlines6} entries", file=sys.stderr)
 
     # Parse jobs and determine direction and joblist
     running_tasks = []
@@ -151,21 +171,33 @@ def main():
                 job_base = job_parts[0]
                 try:
                     array_id = int(job_parts[1])
-                    # Reverse jobs: check job name for 'reverse' keyword
-                    is_reverse = ('reverse' in job_name.lower())
-                    
-                    # Determine which joblist this job uses by reading log files
-                    joblist_file = get_joblist_for_job(job_id, job_base, SCRIPT_DIR, array_id,
-                                                       joblist_lines, joblist2_lines, nlines, nlines2)
-                    if joblist_file is None:
-                        # Fallback: use job ID patterns (more reliable than array_id range)
-                        # 48596451 -> joblist2.txt
-                        # 48482358, 48488999 -> joblist.txt (reverse)
-                        # Others -> joblist.txt (forward)
-                        if job_base == '48596451':
-                            joblist_file = 'joblist2.txt'
-                        else:
-                            joblist_file = 'joblist.txt'
+                    # Explicit joblist mappings by job ID (checked first, before any log file detection)
+                    # 48482358 -> joblist.txt
+                    # 48883252 -> joblist_humanoid2.txt
+                    # 49562357 -> joblist6.txt
+                    if job_base == '48482358':
+                        joblist_file = 'joblist.txt'
+                        is_reverse = False  # Not reversed
+                    elif job_base == '48883252':
+                        joblist_file = 'joblist_humanoid2.txt'
+                        is_reverse = False  # Not reversed
+                    elif job_base == '49562357':
+                        joblist_file = 'joblist6.txt'
+                        is_reverse = False  # Not reversed
+                    else:
+                        # Reverse jobs: check job name for 'reverse' keyword
+                        is_reverse = ('reverse' in job_name.lower())
+                        # Determine which joblist this job uses by reading log files
+                        joblist_file = get_joblist_for_job(job_id, job_base, SCRIPT_DIR, array_id,
+                                                           joblist_lines, joblist2_lines, nlines, nlines2)
+                        if joblist_file is None:
+                            # Fallback: use job ID patterns (more reliable than array_id range)
+                            # 48596451 -> joblist2.txt
+                            # Others -> joblist.txt (forward)
+                            if job_base == '48596451':
+                                joblist_file = 'joblist2.txt'
+                            else:
+                                joblist_file = 'joblist.txt'
                     
                     running_tasks.append((job_base, array_id, is_reverse, joblist_file))
                 except ValueError:
@@ -178,6 +210,12 @@ def main():
         if joblist_file == 'joblist2.txt' and nlines2 > 0:
             joblist_to_use = joblist2_lines
             nlines_to_use = nlines2
+        elif joblist_file == 'joblist_humanoid2.txt' and nlines_humanoid > 0:
+            joblist_to_use = joblist_humanoid_lines
+            nlines_to_use = nlines_humanoid
+        elif joblist_file == 'joblist6.txt' and nlines6 > 0:
+            joblist_to_use = joblist6_lines
+            nlines_to_use = nlines6
         else:
             joblist_to_use = joblist_lines
             nlines_to_use = nlines
